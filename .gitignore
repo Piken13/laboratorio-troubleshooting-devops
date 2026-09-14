@@ -1,0 +1,10 @@
+# Chaves e certificados confidenciais
+*.pem
+*.key
+*.pub
+id_rsa*
+
+# Arquivos temporários e de ambiente
+.env
+*.log
+scratch/

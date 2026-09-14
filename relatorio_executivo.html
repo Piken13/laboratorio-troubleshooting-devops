@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relatório Técnico - Laboratório de Troubleshooting</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    @media print {
+      body { background: white !important; color: black !important; padding: 0 !important; }
+      .no-print { display: none !important; }
+      .page-break { page-break-before: always; }
+      .card-shadow { box-shadow: none !important; border: 1px solid #cbd5e1 !important; }
+    }
+  </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen p-4 sm:p-8 font-sans antialiased">
+  <div class="max-w-5xl mx-auto space-y-6">
+
+    <!-- BARRA SUPERIOR / AÇÕES -->
+    <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-800/80 border border-slate-700/80 rounded-2xl p-4 sm:px-6 shadow-lg backdrop-blur">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 font-bold text-lg border border-emerald-500/30">
+          ✓
+        </span>
+        <div>
+          <h1 class="text-lg font-bold text-white tracking-tight">Relatório de Incidente & Troubleshooting</h1>
+          <p class="text-xs text-slate-400">Laboratório de Avaliação Técnica — Arquitetura em 3 Camadas</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
+          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+          Status: 100% Operacional
+        </span>
+        <button onclick="window.print()" class="no-print px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow transition-colors flex items-center gap-1.5 cursor-pointer">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+          Salvar / Imprimir PDF
+        </button>
+      </div>
+    </div>
+
+    <!-- METADADOS DO AMBIENTE -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 card-shadow">
+        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Responsável</p>
+        <p class="text-sm font-bold text-white mt-1">Yan (trainee-03)</p>
+      </div>
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 card-shadow">
+        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Instância AWS</p>
+        <p class="text-sm font-mono font-semibold text-indigo-300 mt-1">i-03f99bd1d3b82bcea</p>
+      </div>
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 card-shadow">
+        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Endereço Público</p>
+        <a href="http://54.161.202.217" target="_blank" class="text-sm font-mono font-semibold text-emerald-400 hover:underline mt-1 block">54.161.202.217</a>
+      </div>
+      <div class="bg-slate-800/60 border border-slate-700/60 rounded-xl p-4 card-shadow">
+        <p class="text-xs font-medium text-slate-400 uppercase tracking-wider">Resultado da Missão</p>
+        <p class="text-sm font-bold text-emerald-400 mt-1">Restabelecimento Total</p>
+      </div>
+    </div>
+
+    <!-- RESUMO EXECUTIVO -->
+    <section class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 space-y-4 card-shadow">
+      <div class="flex items-center gap-2 border-b border-slate-700/60 pb-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+        <h2 class="text-base font-bold text-white">1. Resumo Executivo</h2>
+      </div>
+      <p class="text-sm leading-relaxed text-slate-300">
+        O ambiente foi disponibilizado com falhas controladas que impediam a renderização dos dados na interface do usuário. 
+        Embora todos os serviços da máquina estivessem com o status <code class="bg-slate-900 px-2 py-0.5 rounded text-emerald-300 text-xs">active (running)</code>, a comunicação inter-camadas estava bloqueada.
+      </p>
+      <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-700/50 text-xs text-slate-300 space-y-2">
+        <p><strong class="text-white">Diferença crucial entre Sintoma e Causa Raiz:</strong></p>
+        <ul class="list-disc list-inside space-y-1 text-slate-400 pl-1">
+          <li><strong class="text-slate-300">Sintoma percebido:</strong> A tela inicial exibia a mensagem de erro <em>"Não foi possível consultar o banco"</em> e a lista de itens não carregava.</li>
+          <li><strong class="text-slate-300">Causas raízes reais:</strong> Foram identificadas e tratadas <strong>3 anomalias interdependentes</strong>: falha de autenticação por senha arbitrária na API, ausência de privilégios ACL na tabela do PostgreSQL e cache estático de configuração pendente no Nginx.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ARQUITETURA EM 3 CAMADAS -->
+    <section class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 space-y-4 card-shadow">
+      <div class="flex items-center gap-2 border-b border-slate-700/60 pb-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+        <h2 class="text-base font-bold text-white">2. Mapa da Arquitetura e Diagnóstico das Camadas</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <!-- Camada 1 -->
+        <div class="bg-slate-900/90 border border-slate-700/70 rounded-xl p-4 flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-200 text-sm">Camada 1: Web / Proxy</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold">Resolvido</span>
+            </div>
+            <p class="text-slate-400 mt-1">Nginx 1.24 (Porta 80)</p>
+            <div class="mt-3 space-y-1 text-slate-300">
+              <p>• <strong>Papel:</strong> Entrega do Front-end (HTML/JS) e roteamento de <code>/api/*</code>.</p>
+              <p>• <strong>Incidente:</strong> Requisições para <code>/api/items</code> retornavam HTTP 404.</p>
+              <p>• <strong>Causa:</strong> Processo em execução estava sem o reload da diretiva de proxy.</p>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800 text-[11px] text-emerald-300 font-mono">
+            Ação: sudo systemctl reload nginx
+          </div>
+        </div>
+
+        <!-- Camada 2 -->
+        <div class="bg-slate-900/90 border border-slate-700/70 rounded-xl p-4 flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-200 text-sm">Camada 2: Aplicação API</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold">Resolvido</span>
+            </div>
+            <p class="text-slate-400 mt-1">Node.js / training-api (Porta 3000)</p>
+            <div class="mt-3 space-y-1 text-slate-300">
+              <p>• <strong>Papel:</strong> Regra de negócio, consulta via <code>psql</code> e JSON REST.</p>
+              <p>• <strong>Incidente:</strong> HTTP 500 no endpoint <code>/api/items</code>.</p>
+              <p>• <strong>Causa:</strong> Systemd configurado com <code>DB_PASSWORD=senha-incorreta</code>.</p>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800 text-[11px] text-emerald-300 font-mono">
+            Ação: Redefinição de senha & sync no systemd
+          </div>
+        </div>
+
+        <!-- Camada 3 -->
+        <div class="bg-slate-900/90 border border-slate-700/70 rounded-xl p-4 flex flex-col justify-between space-y-3">
+          <div>
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-slate-200 text-sm">Camada 3: Banco de Dados</span>
+              <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-semibold">Resolvido</span>
+            </div>
+            <p class="text-slate-400 mt-1">PostgreSQL 16 (Porta 5432)</p>
+            <div class="mt-3 space-y-1 text-slate-300">
+              <p>• <strong>Papel:</strong> Armazenamento persistente (banco <code>training</code>).</p>
+              <p>• <strong>Incidente:</strong> Erro <em>permission denied for table items</em>.</p>
+              <p>• <strong>Causa:</strong> Role <code>training_app</code> não detinha concessão de SELECT.</p>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-slate-800 text-[11px] text-emerald-300 font-mono">
+            Ação: GRANT SELECT ON items TO training_app
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CRONOLOGIA E ETAPAS DE INVESTIGAÇÃO -->
+    <section class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 space-y-6 card-shadow">
+      <div class="flex items-center gap-2 border-b border-slate-700/60 pb-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+        <h2 class="text-base font-bold text-white">3. Matriz Técnica dos Incidentes & Intervenções</h2>
+      </div>
+
+      <!-- Item 1 -->
+      <div class="space-y-2 border-l-2 border-amber-500/60 pl-4 py-1">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-amber-300">Incidente #1: Autenticação Rejeitada entre API e Banco de Dados</h3>
+          <span class="text-xs font-mono text-slate-400">Camada API → DB</span>
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Ao inspecionar a unidade do serviço systemd em <code>/etc/systemd/system/training-api.service</code>, identificou-se a variável estática <code class="text-amber-200">DB_PASSWORD=senha-incorreta</code>. Como a senha cifrada no catálogo do Postgres utilizava algoritmo irreversível (SCRAM-SHA-256), a intervenção segura consistiu em padronizar a credencial em ambos os lados.
+        </p>
+        <div class="bg-slate-950 p-3 rounded-lg font-mono text-[11px] text-slate-300 space-y-1">
+          <p class="text-slate-500"># 1. Redefinir credencial no PostgreSQL e sincronizar unit file:</p>
+          <p class="text-emerald-400">sudo -u postgres psql -c "ALTER USER training_app WITH PASSWORD 'training2026';"</p>
+          <p class="text-emerald-400">sudo sed -i 's/DB_PASSWORD=senha-incorreta/DB_PASSWORD=training2026/' /etc/systemd/system/training-api.service</p>
+          <p class="text-emerald-400">sudo systemctl daemon-reload && sudo systemctl restart training-api.service</p>
+        </div>
+      </div>
+
+      <!-- Item 2 -->
+      <div class="space-y-2 border-l-2 border-amber-500/60 pl-4 py-1">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-amber-300">Incidente #2: Violação de Permissões ACL na Tabela do Banco</h3>
+          <span class="text-xs font-mono text-slate-400">Camada DB</span>
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Com a senha corrigida, a consulta da API retornou o erro interno: <code class="text-red-300">detail: "ERROR: permission denied for table items"</code>. A tabela foi instanciada com propriedade exclusiva do superusuário <code>postgres</code>, bloqueando qualquer consulta da aplicação <code>training_app</code>.
+        </p>
+        <div class="bg-slate-950 p-3 rounded-lg font-mono text-[11px] text-slate-300 space-y-1">
+          <p class="text-slate-500"># 2. Conceder permissão de leitura sobre a entidade:</p>
+          <p class="text-emerald-400">sudo -u postgres psql -d training -c "GRANT SELECT ON items TO training_app;"</p>
+        </div>
+      </div>
+
+      <!-- Item 3 -->
+      <div class="space-y-2 border-l-2 border-blue-500/60 pl-4 py-1">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-blue-300">Incidente #3: Falha de Roteamento no Proxy Reverso (Nginx)</h3>
+          <span class="text-xs font-mono text-slate-400">Camada Web</span>
+        </div>
+        <p class="text-xs text-slate-300 leading-relaxed">
+          Embora a API respondesse diretamente em <code>http://127.0.0.1:3000/api/items</code>, as requisições de navegadores externos via porta 80 recebiam <strong>HTTP 404</strong>. O processo mestre do Nginx estava em execução contínua sem ter assimilado o bloco <code>location /api/</code> definido no virtual host <code>/etc/nginx/sites-available/training</code>.
+        </p>
+        <div class="bg-slate-950 p-3 rounded-lg font-mono text-[11px] text-slate-300 space-y-1">
+          <p class="text-slate-500"># 3. Teste de sintaxe seguro e recarga a quente sem perda de sessões:</p>
+          <p class="text-emerald-400">sudo nginx -t</p>
+          <p class="text-emerald-400">sudo systemctl reload nginx</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- TABELA DE VALIDAÇÃO FINAL -->
+    <section class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 space-y-4 card-shadow">
+      <div class="flex items-center gap-2 border-b border-slate-700/60 pb-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+        <h2 class="text-base font-bold text-white">4. Matriz de Testes e Evidências de Homologação</h2>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead>
+            <tr class="border-b border-slate-700 text-slate-400 uppercase tracking-wider">
+              <th class="py-2.5 px-3">Endpoint / Recurso</th>
+              <th class="py-2.5 px-3">Protocolo / Camada</th>
+              <th class="py-2.5 px-3">Retorno Esperado</th>
+              <th class="py-2.5 px-3">Resultado Obtido</th>
+              <th class="py-2.5 px-3 text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-800 text-slate-300">
+            <tr>
+              <td class="py-3 px-3 font-mono">GET /</td>
+              <td class="py-3 px-3">HTTP (Nginx :80)</td>
+              <td class="py-3 px-3">HTML 200 OK da aplicação</td>
+              <td class="py-3 px-3 font-mono text-emerald-400">HTTP 200 OK</td>
+              <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">PASS</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-mono">GET /api/items</td>
+              <td class="py-3 px-3">Proxy → Node.js → Postgres</td>
+              <td class="py-3 px-3">JSON com 3 itens cadastrados</td>
+              <td class="py-3 px-3 font-mono text-emerald-400">[{"id":1,"name":"Linux"},{"id":2,"name":"Redes"},{"id":3,"name":"DevOps"}]</td>
+              <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">PASS</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-mono">GET /health</td>
+              <td class="py-3 px-3">Proxy → Node.js :3000</td>
+              <td class="py-3 px-3">Status de saúde da API</td>
+              <td class="py-3 px-3 font-mono text-emerald-400">{"status":"ok","service":"training-api"}</td>
+              <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">PASS</span></td>
+            </tr>
+            <tr>
+              <td class="py-3 px-3 font-mono">systemctl --failed</td>
+              <td class="py-3 px-3">SO / Systemd Core</td>
+              <td class="py-3 px-3">0 serviços em estado de falha</td>
+              <td class="py-3 px-3 font-mono text-emerald-400">0 loaded units listed</td>
+              <td class="py-3 px-3 text-center"><span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">PASS</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- LIÇÕES APRENDIDAS E CONCLUSÃO -->
+    <section class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 space-y-4 card-shadow">
+      <div class="flex items-center gap-2 border-b border-slate-700/60 pb-3">
+        <span class="w-2.5 h-2.5 rounded-full bg-indigo-500"></span>
+        <h2 class="text-base font-bold text-white">5. Competências e Conclusão Técnica</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-300">
+        <div class="bg-slate-900/60 border border-slate-700/50 rounded-xl p-4 space-y-2">
+          <p class="font-bold text-white flex items-center gap-2">
+            <span class="text-emerald-400">✓</span> Raciocínio em Camadas & Diagnóstico Metódico
+          </p>
+          <p class="text-slate-400 leading-relaxed">
+            A resolução demonstrou que nem toda falha decorre de processos inativos ou quedas de serviço. O isolamento de cada camada (Web, API e Banco) com ferramentas objetivas (<code class="text-indigo-300">ss</code>, <code class="text-indigo-300">curl</code>, <code class="text-indigo-300">journalctl</code>, <code class="text-indigo-300">psql</code>) evitou alterações desnecessárias e permitiu intervenções precisas sem impacto colateral.
+          </p>
+        </div>
+
+        <div class="bg-slate-900/60 border border-slate-700/50 rounded-xl p-4 space-y-2">
+          <p class="font-bold text-white flex items-center gap-2">
+            <span class="text-emerald-400">✓</span> Boas Práticas Operacionais
+          </p>
+          <p class="text-slate-400 leading-relaxed">
+            As ações corretivas respeitaram os princípios de menor privilégio (concessão de <code class="text-indigo-300">SELECT</code> estritamente à tabela necessária) e disponibilidade de serviço (uso de <code class="text-indigo-300">systemctl reload</code> no Nginx em vez de reinicializações abruptas que derrubariam tráfego).
+          </p>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-slate-700/50 flex flex-wrap items-center justify-between text-xs text-slate-400">
+        <span>Assinatura do Responsável: <strong class="text-slate-200">Yan (trainee-03)</strong></span>
+        <span>Data de Homologação: <strong class="text-slate-200">14/09/2026</strong></span>
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>
